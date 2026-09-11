@@ -17,9 +17,26 @@ $CursorPath    = "$MediaFolder\custom_cursor.cur"
 
 New-Item -ItemType Directory -Force -Path $MediaFolder | Out-Null
 
-Write-Host ">>> [1/6] Installiere Programme über WinGet..." -ForegroundColor Green
-winget install --id Rocksdanister.Lively -e --silent --accept-source-agreements --accept-package-agreements
-winget install --id TranslucentTB.TranslucentTB -e --silent --accept-source-agreements --accept-package-agreements
+Write-Host ">>> [1/6] Akzeptiere WinGet-Vereinbarungen und installiere Programme..." -ForegroundColor Green
+
+# Quellenvereinbarung vorab einmalig akzeptieren
+winget source update --accept-source-agreements | Out-Null
+
+# Lively Wallpaper installieren (Versuch über WinGet-ID, sonst MS Store ID)
+winget install --id "rocksdanister.LivelyWallpaper" -e --silent --accept-source-agreements --accept-package-agreements
+if ($LASTEXITCODE -ne 0) {
+    winget install --id "9P95913M3WW0" --source msstore --silent --accept-source-agreements --accept-package-agreements
+}
+
+# TranslucentTB installieren (Versuch über WinGet-ID, sonst MS Store ID)
+winget install --id "TranslucentTB.TranslucentTB" -e --silent --accept-source-agreements --accept-package-agreements
+if ($LASTEXITCODE -ne 0) {
+    winget install --id "9PF4KZ2VN4W9" --source msstore --silent --accept-source-agreements --accept-package-agreements
+}
+
+# TranslucentTB direkt starten
+Write-Host ">>> Starte TranslucentTB..." -ForegroundColor Green
+Start-Process "explorer.exe" -ArgumentList "shell:AppsFolder\9PF4KZ2VN4W9!TranslucentTB" -ErrorAction SilentlyContinue
 
 Write-Host ">>> [2/6] Lade Python-EXE herunter und füge sie zum Autostart hinzu..." -ForegroundColor Green
 if ($ExeUrl -like "http*") {
